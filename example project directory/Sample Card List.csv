@@ -1,0 +1,3 @@
+set number,rarity,color,type,cost,power,effect,name,flavor,artist,artwork,copywrite,type shadow,power shadow,name shadow,effect shadow,flavor image
+1,common,#FF0000,Action,1,6,Do some effect to a thing,Test Card 1,,Théodore Gericault,mounted_trumpeters.png,™&© 2022 Christopher King,Action,6,Test Card 1,Do some effect to a thing,logos.png
+4,common,#000000,Unit,,,,Loyal Follower,He gave everything,William Blake,job.png,™&© 2022 Christopher King,Unit,,Loyal Follower,,ethos.png
