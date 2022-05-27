@@ -24,6 +24,22 @@ def find_layer_by_name (image, name):
     for layer in image.layers:
         if layer.name == name:
             return layer
+        if(pdb.gimp_item_is_group(layer)):
+            potential = find_layer_name_in_group(layer, name)
+            if(potential != None):
+                return potential
+    return None
+def find_layer_name_in_group(layerGroup, name):
+    gr = layerGroup
+    gr_items = pdb.gimp_item_get_children(gr)
+    for index in gr_items[1]:
+        item = gimp.Item.from_id(index)
+        if item.name == name:
+            return item
+        elif(pdb.gimp_item_is_group(item)):
+            potential = find_layer_name_in_group(item, name)
+            if(potential != None):
+                return potential
     return None
 
 def plugin_main(timg, tdrawable, data_dir, data_out, data_csv):
