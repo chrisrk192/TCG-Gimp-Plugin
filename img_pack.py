@@ -44,7 +44,7 @@ def plugin_main(timg, tdrawable, data_dir, data_width, data_height, data_img_w, 
                     pdb.gimp_item_transform_scale(new_asset, x * originalWidth, y * originalHeight, (x+1) * originalWidth, (y+1) * originalHeight)
             i+=1;
     
-    if(i < len(files):
+    if(i < len(files)):
         pdb.gimp_message("Only fit " + str(i) + " files out of " + str(len(files)))
     
     pdb.gimp_image_undo_group_end(timg)
