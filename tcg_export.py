@@ -29,6 +29,7 @@ def find_layer_by_name (image, name):
             if(potential != None):
                 return potential
     return None
+
 def find_layer_name_in_group(layerGroup, name):
     gr = layerGroup
     gr_items = pdb.gimp_item_get_children(gr)
@@ -67,8 +68,9 @@ def plugin_main(timg, tdrawable, data_dir, data_out, data_csv):
                     pdb.gimp_image_set_active_layer(timg, layer)
                     path = os.path.join(data_dir, col)
                     #if there exists a folder in the directory with the same name as the column, the value is a file name
-                    if os.path.exists(path):
+                    if row[col_index] != None and row[col_index] != '' and os.path.exists(path):
                         pdb.gimp_message("found an asset folder for " + col)
+                        pdb.gimp_message("Loading file " + row[col_index])
                         img_path = os.path.join(path, row[col_index])
                         new_asset = pdb.gimp_file_load_layer(timg, img_path)
                         
@@ -77,15 +79,17 @@ def plugin_main(timg, tdrawable, data_dir, data_out, data_csv):
                             new_asset.name = col
                             opacity_before = layer.opacity 
                             timg.add_layer(new_asset, -1)
-                            scalefactor = new_asset.height / layer.height
-                            extrawidth = ((new_asset.width / scalefactor) - layer.width) / 2
-                            pdb.gimp_item_transform_scale(new_asset,  0 - extrawidth + layer.offsets[0], layer.offsets[1], layer.width + extrawidth + layer.offsets[0], layer.height + layer.offsets[1])
+                            pdb.gimp_message("Height: " + str(new_asset.height))
+                            scalefactor = new_asset.width / float(layer.width)
+                            pdb.gimp_message("Scale: " + str(scalefactor))
+                            extraheight = ((new_asset.height / scalefactor) - layer.height) / 2
+                            pdb.gimp_item_transform_scale(new_asset, layer.offsets[0], layer.offsets[1] - extraheight, layer.width + layer.offsets[0], layer.height + layer.offsets[1] + extraheight)
                             pdb.gimp_layer_resize_to_image_size(new_asset)
                             layer = pdb.gimp_image_merge_down(timg, new_asset, 2)
                             layer.opacity = opacity_before
                             
                     #if the value in the layer is a color, recolor the layer
-                    elif row[col_index] != None and row[col_index].find("#") != -1:
+                    elif row[col_index] != None and row[col_index] != '' and row[col_index].find("#") != -1:
                         pdb.gimp_message("found a color for " + col)
                         pdb.gimp_selection_none(timg)
                         pdb.gimp_image_select_item(timg, 2, layer)
@@ -94,8 +98,11 @@ def plugin_main(timg, tdrawable, data_dir, data_out, data_csv):
                         pdb.gimp_selection_none(timg)
                     #it is a text layer
                     else:
-                        pdb.gimp_message("text layer " + col)
-                        pdb.gimp_text_layer_set_text(layer, row[col_index])
+                        try:
+                            pdb.gimp_message("text layer " + col)
+                            pdb.gimp_text_layer_set_text(layer, row[col_index])
+                        except:
+                            pdb.gimp_message("nothing set")
             #end of each column processing, template ready for export
             if(name != None):
                 new_image = pdb.gimp_image_duplicate(timg)
